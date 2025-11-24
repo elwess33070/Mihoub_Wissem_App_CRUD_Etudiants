@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD Étudiants</title>
+</head>
+<body>
+    <div class="wrap">
+    <header>
+      <h1>Application CRUD Étudiants</h1>
+      <div class="controls">
+        <input id="search" type="search" placeholder="Recherche: nom, email, matricule..." />
+        <select id="filterClass"><option value="">Filtrer par classe</option></select>
+        <select id="filterGender"><option value="">Tous genres</option><option value="M">Masculin</option><option value="F">Féminin</option></select>
+        <button id="btnAdd" class="btn-animated btn-primary">Ajouter étudiant</button>
+      </div>
+    </header>
+
+    <section class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div class="small">Double-clique sur une ligne pour éditer • Cliquer sur entêtes pour trier</div>
+        <div class="export-import">
+          <button id="btnExport">Exporter JSON</button>
+          <button id="btnImport">Importer JSON</button>
+          <input id="importFile" type="file" accept="application/json" style="display:none" />
+        </div>
+      </div>
+
+      <div id="listArea" class="fade-in">
+        <!-- table injected here -->
+      </div>
+
+    </section>
+  </div>
+
+  <!-- modal -->
+  <div id="modalBack" class="modal-back" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true">
+      <h3 id="modalTitle">Ajouter étudiant</h3>
+      <form id="studentForm">
+        <div class="form-row">
+          <div>
+            <label>Nom complet</label>
+            <input id="name" type="text" required />
+          </div>
+          <div>
+            <label>Matricule</label>
+            <input id="matr" type="text" required />
+          </div>
+        </div>
+        <div class="form-row">
+          <div>
+            <label>Email</label>
+            <input id="email" type="text" required />
+          </div>
+          <div>
+            <label>Age</label>
+            <input id="age" type="number" min="10" max="99" required />
+          </div>
+        </div>
+        <div class="form-row">
+          <div>
+            <label>Genre</label>
+            <select id="gender"><option value="M">M</option><option value="F">F</option></select>
+          </div>
+          <div>
+            <label>Classe</label>
+            <input id="classe" type="text" placeholder="ex: L1 Info" />
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px">
+          <button type="button" id="btnCancel">Annuler</button>
+          <button type="submit" class="btn-primary">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
