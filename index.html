@@ -112,5 +112,127 @@
       </form>
     </div>
   </div>
+<script>
+    const LS_KEY = 'students_db_v1';
+    let students = [];
+    let editId = null; // when editing
+    let sortState = {key: 'name', dir: 1};
+
+    const listArea = document.getElementById('listArea');
+    const modalBack = document.getElementById('modalBack');
+    const studentForm = document.getElementById('studentForm');
+    const btnAdd = document.getElementById('btnAdd');
+    const btnCancel = document.getElementById('btnCancel');
+    const modalTitle = document.getElementById('modalTitle');
+    const searchInput = document.getElementById('search');
+    const filterClass = document.getElementById('filterClass');
+    const filterGender = document.getElementById('filterGender');
+    const btnExport = document.getElementById('btnExport');
+    const btnImport = document.getElementById('btnImport');
+    const importFile = document.getElementById('importFile');
+
+    const fName = document.getElementById('name');
+    const fMatr = document.getElementById('matr');
+    const fEmail = document.getElementById('email');
+    const fAge = document.getElementById('age');
+    const fGender = document.getElementById('gender');
+    const fClasse = document.getElementById('classe');
+
+    const uid = ()=>Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+    const save = ()=>localStorage.setItem(LS_KEY, JSON.stringify(students));
+    const load = ()=>{try{return JSON.parse(localStorage.getItem(LS_KEY) || 'null') || []}catch(e){return []}}
+
+    function seedIfEmpty(){
+      students = load();
+      if(!students || students.length===0){
+        students = [
+          {id:uid(),name:'Aymen Ben Ali',matr:'M2025',email:'aymen.benali@gmail.com',age:21,gender:'M',classe:'L1 Sc Info'},
+          {id:uid(),name:'Salma Trabelsi',matr:'M2026',email:'salma.trabelsi@gmail.com',age:20,gender:'F',classe:'L1 Sc Info'},
+          {id:uid(),name:'Rami Jaziri',matr:'M2027',email:'ramijaziri19@gmail.com',age:22,gender:'M',classe:'L2 Math'}
+        ];
+        save();
+      }
+    }
+
+    function render(){
+      const q = searchInput.value.trim().toLowerCase();
+      const classFilter = filterClass.value;
+      const genderFilter = filterGender.value;
+
+      let list = students.filter(s=>{
+        if(classFilter && s.classe !== classFilter) return false;
+        if(genderFilter && s.gender !== genderFilter) return false;
+        if(!q) return true;
+        return [s.name,s.matr,s.email,s.classe,(s.age||'')+'' ].join(' ').toLowerCase().includes(q);
+      });
+
+      list.sort((a,b)=>{
+        let A = a[sortState.key];
+        let B = b[sortState.key];
+        if(typeof A === 'string') A = A.toLowerCase();
+        if(typeof B === 'string') B = B.toLowerCase();
+        if(A<B) return -1*sortState.dir;
+        if(A>B) return 1*sortState.dir;
+        return 0;
+      });
+
+      if(list.length===0){
+        listArea.innerHTML = '<div class="empty">Aucun étudiant trouvé. Crée le premier !</div>';
+        updateClassFilter();
+        return;
+      }
+
+      const cols = ['Nom','Matricule','Email','Age','Genre','Classe','Actions'];
+      let html = '<table><thead><tr>';
+      const mapKey = {0:'name',1:'matr',2:'email',3:'age',4:'gender',5:'classe'};
+      cols.forEach((c,i)=>{
+        if(i<6) html += `<th data-key="${mapKey[i]}">${c} ${sortState.key===mapKey[i]? (sortState.dir===1?'▲':'▼') : ''}</th>`;
+        else html += `<th>${c}</th>`;
+      });
+      html += '</tr></thead><tbody>';
+      list.forEach(s=>{
+        html += `<tr data-id="${s.id}">
+          <td>${escapeHtml(s.name)}</td>
+          <td>${escapeHtml(s.matr)}</td>
+          <td>${escapeHtml(s.email)}</td>
+          <td>${s.age||''}</td>
+          <td><span class="tag ${s.gender==='M'?'m':'f'}">${s.gender}</span></td>
+          <td>${escapeHtml(s.classe||'')}</td>
+          <td class="actions">
+            <button data-action="view">Voir</button>
+            <button data-action="edit">Éditer</button>
+            <button data-action="delete" class="btn-danger">Suppr</button>
+          </td>
+        </tr>`;
+      });
+      html += '</tbody></table>';
+      listArea.innerHTML = html;
+
+      document.querySelectorAll('th[data-key]').forEach(th=>th.addEventListener('click', ()=>{
+        const k = th.getAttribute('data-key');
+        if(sortState.key===k) sortState.dir *= -1; else {sortState.key=k; sortState.dir=1}
+        render();
+      }));
+
+      document.querySelectorAll('tbody tr').forEach(row=>{
+        row.addEventListener('dblclick', ()=>{
+          const id = row.getAttribute('data-id'); openEdit(id);
+        });
+        row.querySelectorAll('button').forEach(btn=>{
+          btn.addEventListener('click',(ev)=>{
+            ev.stopPropagation();
+            const id = row.getAttribute('data-id');
+            const action = btn.getAttribute('data-action');
+            if(action==='view') openView(id);
+            if(action==='edit') openEdit(id);
+            if(action==='delete') doDelete(id);
+          })
+        })
+      });
+
+      updateClassFilter();
+    }
+  </script>
+
 </body>
 </html>
