@@ -153,7 +153,6 @@
         save();
       }
     }
-
     function render(){
       const q = searchInput.value.trim().toLowerCase();
       const classFilter = filterClass.value;
@@ -232,7 +231,21 @@
 
       updateClassFilter();
     }
-  </script>
 
+    function updateClassFilter(){
+      const classes = Array.from(new Set(students.map(s=>s.classe).filter(Boolean)));
+      filterClass.innerHTML = '<option value="">Filtrer par classe</option>' + classes.map(c=>`<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+    }
+
+    function openModal(show=true){
+      modalBack.classList.toggle('show', show);
+      modalBack.setAttribute('aria-hidden', String(!show));
+      if(show) {
+        setTimeout(()=>fName.focus(),120);
+      } else {
+        studentForm.reset(); editId=null;
+      }
+    }
+  </script>
 </body>
 </html>

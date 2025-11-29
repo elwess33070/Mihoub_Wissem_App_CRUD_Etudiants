@@ -8,3 +8,5 @@
 La principale difficulté rencontrée a été de trouver un style adéquat qui reste à la fois esthétique, lisible et compatible avec tous les éléments de l’application.
 
 -3ème commit : declaration de toutes les constantes pour js et initialisation des fonctions.
+
+- 4ème commit : Ajout des fonctions render et openModal.
